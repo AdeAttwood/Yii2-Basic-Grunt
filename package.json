@@ -1,0 +1,21 @@
+{
+  "name": "Yii-2-Basic",
+  "version": "0.0.0",
+  "description": "Yii 2 Basic Project Template ===============================",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.17.5",
+    "grunt": "^1.0.1",
+    "grunt-browser-sync": "^2.2.0",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-php": "^1.5.1",
+    "node-sass": "^3.11.3",
+    "grunt-contrib-uglify": "~2.0.0"
+  }
+}

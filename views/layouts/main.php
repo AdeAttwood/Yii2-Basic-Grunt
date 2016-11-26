@@ -7,9 +7,7 @@ use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
-use app\assets\AppAsset;
 
-AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -20,6 +18,7 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <?= Html::cssFile('/css/styles.css') ?>
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -74,5 +73,6 @@ AppAsset::register($this);
 
 <?php $this->endBody() ?>
 </body>
+<?= Html::jsFile('/js/script.js') ?>
 </html>
 <?php $this->endPage() ?>
