@@ -1,24 +1,21 @@
 {
-    "name": "yiisoft/yii2-app-basic",
-    "description": "Yii 2 Basic Project Template",
+    "name": "adeattwood/Yii2-Basic-Grunt",
+    "description": "Yii 2 Basic Project Template With Grunt",
     "keywords": ["yii2", "framework", "basic", "project template"],
-    "homepage": "http://www.yiiframework.com/",
     "type": "project",
     "license": "BSD-3-Clause",
-    "support": {
-        "issues": "https://github.com/yiisoft/yii2/issues?state=open",
-        "forum": "http://www.yiiframework.com/forum/",
-        "wiki": "http://www.yiiframework.com/wiki/",
-        "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/yii2"
-    },
     "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Ade Attwood",
+            "email": "attwood16@googlemail.com"
+        }
+    ],
     "require": {
         "php": ">=5.4.0",
         "yiisoft/yii2": "~2.0.5",
         "yiisoft/yii2-bootstrap": "~2.0.0",
-        "yiisoft/yii2-swiftmailer": "~2.0.0",
-        "bower-asset/bootstrap-sass": "^3.3"
+        "yiisoft/yii2-swiftmailer": "~2.0.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
@@ -27,7 +24,9 @@
 
         "codeception/base": "^2.2.3",
         "codeception/verify": "~0.3.1",
-        "codeception/specify": "~0.4.3"
+        "codeception/specify": "~0.4.3",
+
+        "bower-asset/bootstrap-sass": "^3.3"
     },
     "config": {
         "process-timeout": 1800

@@ -149,6 +149,7 @@ module.exports = function(grunt) {
                   'build/**/readme.*',
                   'build/**/phpunit.xml*',
                   'build/**/codeception.yml',
+                  'build/**/*.map',
                   'build/**/*.bat'
               ]
             },
