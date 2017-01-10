@@ -13,10 +13,8 @@ function info {
 info "Provision-script user: `whoami`"
 
 info "Restart web-stack"
-service php5-fpm restart
-service nginx restart
+service apache2 restart
 service mysql restart
-
 
 info "start selenium server"
 export DISPLAY=:10

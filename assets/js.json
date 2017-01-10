@@ -1,0 +1,27 @@
+{
+    "web/js/script.js": [
+        "vendor/bower/jquery/dist/jquery.js",
+        
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/affix.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/alert.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/button.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/carousel.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/collapse.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/modal.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/popover.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/tab.js",
+        "vendor/bower/bootstrap-sass/assets/javascripts/bootstrap/transition.js",
+        
+        "vendor/yiisoft/yii2/assets/yii.js",
+        
+        "vendor/yiisoft/yii2/assets/yii.activeForm.js",
+        "vendor/yiisoft/yii2/assets/yii.gridView.js",
+        "vendor/yiisoft/yii2/assets/yii.validation.js",
+        "vendor/yiisoft/yii2/assets/yii.captcha.js",
+        
+        "vendor/bower/yii2-pjax/jquery.pjax.js"
+    ]
+}

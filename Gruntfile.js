@@ -1,31 +1,94 @@
-function extend(target) {
-    var sources = [].slice.call(arguments, 1);
-    sources.forEach(function (source) {
-        for (var prop in source) {
-            target[prop] = source[prop];
-
-        }
-
-    });
-    return target;
-};
-
 module.exports = function(grunt) {
     grunt.initConfig({
-               watch : {
+        vars:{
+            changedFile : ""
+        },
+        
+        exec: {
+            test: {
+                cmd: function (filename) {
+                    return 'composer exec codecept run ' + filename;
+                },
+                stdout: true
+            },
+            'cu-nodev': {
+                cmd: function (filename) {
+                    return 'composer install --no-dev --no-scripts -d build';
+                },
+                stdout: true
+            },
+            'cu': {
+                cmd: function (filename) {
+                    return 'composer update';
+                },
+                stdout: true
+            }
+        },
+        
+        
+        cssmin: {
+            options:{},
+                target: {
+                  files :grunt.file.readJSON("assets/css.json")
+                } 
+            
+          },
+         sass: {
+            dev: {
+                files: [{
+                    expand: true,
+                    cwd: 'assets/sass',
+                    src: ['*.scss', '*.sass'],
+                    dest: 'assets/css',
+                    ext: '.css'
+                }]
+            },
+            prod: {
+                files: [{
+                    expand: false,
+                    cwd: 'assets/sass',
+                    src: ['*.scss', '*.sass'],
+                    dest: 'assets/css',
+                    ext: '.css'
+                }]
+            }
+        },
+        uglify: {
+            dev: {
+                options: {
+                    sourceMap: true,
+                    mangle: true
+                },
+                files: grunt.file.readJSON("assets/js.json")
+            },
+            prod: {
+                options: {
+                    sourceMap: false,
+                    mangle: true
+                },
+                files: grunt.file.readJSON("assets/js.json")
+            }
+        },
+         watch : {
             js : {
-                files : 'assets/js/**/*.js',
+                files : ['assets/js/**/*.js', 'assets/js.json'],
                 tasks : ['build-js'],
             },
             sass : {
-                files :['assets/sass/**/*.sass', 'assets/sass/**/*.scss'],
-                tasks : ['build-sass'],
+                files :['assets/sass/**/*.sass', 'assets/sass/**/*.scss', 'assets/css.json'],
+                tasks : ['build-css'],
+            },
+            tests : {
+                files: ['tests/**/*.php'],
+                tasks : ['exec:test:<%= vars.changedFile %>']
             }
+            
         },
         browserSync : {
             dev : {
                 bsFiles : {
                     src : [
+                        'assets/**',
                         'config/**',
                         'commands/**',
                         'controllers/**',
@@ -33,163 +96,147 @@ module.exports = function(grunt) {
                         'tests/**',
                         'views/**',
                         'web/**'
-                    ]
+                        ]
+                    
                 },
                 options : {
                     proxy : '192.168.0.137',
-                    watchTask : true,
-                    notify : true,
-                    logLevel : 'silent',
-                    ghostMode : {
-                        clicks : true,
-                        scroll : true,
-                        links : true,
-                        forms : true
-                    }
+                    watchTask : true
                 }
             }
         },
+        copy: {
+            main: {
+                files: [
+                    {expand: true, src: [
+                        'composer.json',
+                        'config/**',
+                        'commands/**',
+                        'components/**',
+                        'controllers/**',
+                        'mail/**',
+                        'models/**',
+                        'views/**',
+                        'web/**',
+                        'web/.htaccess',
+                        '!web/assets/**',
+                        'web/assets/.gitignore',
+                        '!web/index-test.php',
+                        '!**/*.map',
+                    ], dest: 'build/'},
+                // todo make dir runtime
+                ],
+            },
+        },
+        clean: {
+            build: {
+              src: [
+                  'build/composer.json',
+                  'build/composer.lock',
+                  'build/vendor/bin',
+                  'build/vendor/bower',
+                  'build/config/env-local.php',
+                  'build/**/.git',
+                  'build/**/.github',
+                  'build/**/.gitignore',
+                  'build/**/.gitattributes',
+                  'build/**/.editorconfig',
+                  'build/**/composer.json',
+                  'build/**/README.*',
+                  'build/**/LICENSE.md',
+                  'build/**/CHANGELOG.md',
+                  'build/**/UPGRADE.md',
+                  'build/**/readme.*',
+                  'build/**/phpunit.xml*',
+                  'build/**/codeception.yml',
+                  'build/**/*.bat'
+              ]
+            },
+            removeBuild: {
+              src: ['build/']
+            }
+        },
+        'ftp-deploy': {
+            build: {
+              auth: {
+                host: 'Your Host',
+                port: 21,
+                authKey: "Your Auth Key"
+              },
+              src: 'build',
+              dest: '/your/dest/path'
+            }
+          }
     }); 
 
     /*
      * Load npm grunt tasks
      */
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-browser-sync');
-    grunt.loadNpmTasks('grunt-php');
+    grunt.loadNpmTasks('grunt-ftp-deploy');
+    grunt.loadNpmTasks('grunt-exec');
+  
 
-    /*
-     * Insert config vars into the grunt config
-     */
-    grunt.config('uglify',{
-        'main-js':{
-            files : {
-                'web/js/script.js': [
-                    /* Jquery js
-                     *
-                     * Install via composer
-                     * $ composer require bower-asset/jquery
-                     */
-                    'vendor/bower/jquery/dist/jquery.js',
-
-                    /* Bootsrtap js
-                     *
-                     * Install via composer
-                     * $ composer require bower-asset/bootstrap-sass
-                     */
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/affix.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/alert.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/button.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/carousel.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/collapse.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/dropdown.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/modal.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/popover.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/scrollspy.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/tab.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/tooltip.js',
-                    'vendor/bower/bootstrap-sass/javascripts/bootstrap/transition.js',
-
-                    /* Yii js 
-                     * 
-                     * To be used in your yii app
-                     */
-                    'vendor/yiisoft.yii2.assets/yii.js',
-
-                    /* Yii form js 
-                     * 
-                     * To be used in your yii app
-                     * when you are useing forms
-                     */
-                    'vendor/yiisoft.yii2.assets/yii.activeForm.js',
-                    'vendor/yiisoft.yii2.assets/yii.validation.js',
-
-                    /* Yii pjax js
-                     *
-                     * Handels the yii ajax forms
-                     */
-                    'vendor/bower/yii2-pjax/jquery.pjax.js',
-
-                    /* Yii captcha js 
-                     * 
-                     * To be used in your yii app
-                     * when you are useing yiis captcha
-                     */
-                    'vendor/yiisoft.yii2.assets/yii.captcha.js',
-
-                    /* Yii gridview js
-                     *
-                     * To be used in your yii app
-                     * when you are useing the gridview widget
-                     */
-                    'vendor/yiisoft.yii2.assets/yii.gridView.js',
-
-                    /* Other Files
-                     * Include all files in assets/js
-                     */
-                    'assets/js/*.js'
-                ],
-            }
-        }
-    });
-    grunt.config('sass', {
-        'main-sass':{
-            files:{
-                'web/css/styles.css':'assets/sass/*.scss'
-            }
-        }
-    });
-
-    /*
+       /*
      * Add the pedefined config for development to each of
      * the sass tasks in the sass config and runs the task
      */
-    grunt.registerTask('build-sass', function () {
-        var newconfig = {};
-        var sassdevconfig = {
-            options: {
-                //style: 'expanded',
-                style: 'compressed',
-                update: true
-            }
-        };
-        var gruntsassconfig = grunt.config.get('sass');
-        Object.keys(gruntsassconfig).forEach(function(key,index) {
-            newconfig[key] = extend({}, gruntsassconfig[key] ,sassdevconfig);
+    grunt.registerTask('build-css', function () {
+        grunt.config('cssmin.options', {
+                sourceMap:true
         });
-        grunt.config('sass', newconfig)
-        grunt.task.run('sass');
-
-        //console.log(JSON.stringify(grunt.config.get('sass'), null, 2));
+        grunt.task.run('sass:dev');
+        grunt.task.run('cssmin');
     });
 
     /*
-     * Runs the task concat
+     * Runs the task uglify
      */
     grunt.registerTask('build-js', function () {
-        var newconfig = {};
-        var jsdevconfig = {
-            options: {
-                sourceMap:true
-            }
-        };
-        var gruntjsconfig = grunt.config.get('uglify');
-        Object.keys(gruntjsconfig).forEach(function(key,index) {
-            newconfig[key] = extend({}, gruntjsconfig[key] ,jsdevconfig);
-        });
-        grunt.config('uglify', newconfig)
-        grunt.task.run('uglify');
-        //console.log(JSON.stringify(grunt.config.get('uglify'), null, 2));
+        grunt.task.run('uglify:dev');
     });
 
-    grunt.registerTask('brserve', [
+    grunt.registerTask('build-dev', [
+        'build-css',
+        'build-js'
+    ]);
+
+    grunt.registerTask('bs', [
         'browserSync:dev',
-        'build-sass',
+        'build-css',
         'build-js',
         'watch'
     ]);
+    
+    grunt.registerTask('deploy', ['build-prod', 'ftp-deploy', 'clean:removeBuild'])
+    
+    grunt.registerTask('build-prod', function() {
+        grunt.config('cssmin.options', {
+           
+                sourceMap:false,
+                shorthandCompacting:true,
+                level:2
+            
+        });
+        grunt.task.run('clean:removeBuild');
+        grunt.task.run('sass:prod');
+        grunt.task.run('cssmin');
+        grunt.task.run('uglify:prod');      
+        grunt.task.run('copy');
+        grunt.task.run('exec:cu-nodev');
+        grunt.task.run('clean:build');
+    });
+    
+     // change config var to changed file when a file is changed
+     grunt.event.on('watch', function(action, filepath) {
+           grunt.config('vars.changedFile', filepath);
+    });
 
-   grunt.registerTask('default', ['brserve']); 
+   grunt.registerTask('default', ['bs']); 
 };

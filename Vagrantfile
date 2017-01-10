@@ -20,7 +20,7 @@ end
 # vagrant configurate
 Vagrant.configure(2) do |config|
   # select the box
-  config.vm.box = 'ubuntu/trusty64'
+  config.vm.box = 'yii2php7-004'
 
   # should we ask about box updates?
   config.vm.box_check_update = options['box_check_update']
@@ -45,7 +45,7 @@ Vagrant.configure(2) do |config|
   config.vm.network 'public_network', ip: options['ip']
 
   # sync: folder 'yii2-app' (host machine) -> folder '/app' (guest machine)
-  config.vm.synced_folder './', '/app', owner: 'vagrant', group: 'vagrant'
+  config.vm.synced_folder './', '/app', owner: 'ubuntu', group: 'ubuntu'
 
   # disable folder '/vagrant' (guest machine)
   config.vm.synced_folder '.', '/vagrant', disabled: true
