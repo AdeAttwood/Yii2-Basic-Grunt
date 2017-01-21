@@ -3,7 +3,7 @@ module.exports = function(grunt) {
         vars:{
             changedFile : ""
         },
-        
+        pkg: grunt.file.readJSON('package.json'),
         exec: {
             test: {
                 cmd: function (filename) {
@@ -159,22 +159,22 @@ module.exports = function(grunt) {
               src: ['build/']
             }
         },
-        'ftp-deploy': {
-            build: {
-              auth: {
-                host: 'Your Host',
-                port: 21,
-                authKey: "Your Auth Key"
-              },
-              src: 'build',
-              dest: '/your/dest/path'
-            }
-          }
+        compress: {
+            main: {
+                options: {
+                archive: '<%= pkg.name %>_<%= pkg.version %>.zip'
+                },
+                files: [
+                    {expand: true, cwd: 'build/', src: ['**'], dest: ''}
+                ]
+           }
+        }
     }); 
 
     /*
      * Load npm grunt tasks
      */
+    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -182,7 +182,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-browser-sync');
-    grunt.loadNpmTasks('grunt-ftp-deploy');
     grunt.loadNpmTasks('grunt-exec');
   
 
@@ -216,9 +215,7 @@ module.exports = function(grunt) {
         'build-js',
         'watch'
     ]);
-    
-    grunt.registerTask('deploy', ['build-prod', 'ftp-deploy', 'clean:removeBuild'])
-    
+        
     grunt.registerTask('build-prod', function() {
         grunt.config('cssmin.options', {
            
@@ -234,6 +231,8 @@ module.exports = function(grunt) {
         grunt.task.run('copy');
         grunt.task.run('exec:cu-nodev');
         grunt.task.run('clean:build');
+        grunt.task.run('compress');
+        grunt.task.run('clean:removeBuild');
     });
     
      // change config var to changed file when a file is changed
